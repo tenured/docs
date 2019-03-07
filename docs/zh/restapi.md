@@ -1,53 +1,106 @@
-# REST API
+# RESTful API
 
-### 获取token(或sign)
-##### 接口描述
-通过用户注册企业账号、账号信息获取token
-###### 请求url
-POST：/v1/build_token
-###### 请求参数
+## API调用规范
+
+RESTful API是Tenured给提供App后台的HTTP/HTTPS管理接口，其主要目的在于为 App 后台提供一个统一全功能后台管理入口。
+
+为安全保证API接口安全性，无论是公有云还是私有云均需[安全效验]()。
+
+- [公有云对接说明]()
+- [私有云对接说明]()
+- [安全效验方式]()
+
+### 请求规范
+
+请求地址：
+```
+公有云：http://api-tenured.renzhen.la/$version/$serverModule/$serverCommand
+私有云：http://serverHost:serverPort/$version/$serverModule/$serverCommand
+```
+
+请求共有`header`安全数据：
+
+参数名 |  参数类型 |  描述
+------|----------|-----------
+tenured_app_id | string | 共有云申请或者私有设置的App ID
+tenured_ak | string | 应用申请的AK 
+tenured_sign | string | 安全校验值[安全校验]() 
+
+请求的其他非安全数据，均已按照restfull api标准传输。且POST,PUT均已`Content-Type: application/json`方式提交。
+
+### 结果返回规范
+
+HTTP 状态码均为 `200`，标示接口请求成功。
+
+其他HTTP状态吗均为请求错误，具体原因查阅json body 的 error、message 来表示的。
+
+例如：
+
+```json
+{"error":"1000","message":"非法调用"}
+```
+
+
+
+## 接口说明
+
+### 账户类接口
+
+#### 获取IM登录Token（独立账号模式）
+此接口用于对接服务端传递新im登录的地址和token
+
+请求url `POST /v1/account/token`
+
  参数名称  |   参数类型  |    描述  
 ----------|-------------|----------
-appId     |   String    | 控制台创建应用分配appId
-private   |   String    | 控制台获取的私钥 
-    
-注：后续控制台设计完，更新token生成参数
+ userId     | string   | 第三方系统的用户ID，全局唯一                
+ expireTime | string   | 申请token的过期时间，如果数据为空则不过期。 
 
-###### 响应参数
- 参数名称 |   参数类型   |    描述  
--------- |-------------|----------
-  error  |   String    |  错误码，0000标示成功，非0000标示失败        
-  message|   String    |  错误信息        
-  data   |   String    |  结果数据（json）        
+`注：如果当前APP设计为不可多端登录，当有新的token申请后将导致当前登录用户直接下线。`
 
-###### 请求示例
-    { }
-###### 响应结果示例
-    { }
+响应参数
 
-##### 错误码说明
-    HTTP 状态码均为 200，标示接口请求结果，真正的错误码，错误信息是通过应答包体中的 error、message 来表示的。
-    本 API 私有错误码如下：
- 错误码  |   描述   
---------|----------
-  0000  |   正确结果
+ 参数名称 |   参数类型   
+-------- |-------------
+ token       | 登录使用的TOKEN 
+ expireTime  | 过期时间        
+  linkAddress  | 连接服务地址 
+
+请求示例
+
+```json
+{
+    "userId":"100001"
+}
+```
+响应结果示例
+
+```json
+{
+    "token":"123123123123123",
+    "expireTime":null,
+ 	"linkAddress":"192.168.0.10:9999"
+}
+```
 
 
-### 账户管理
-#### 创建单个账户接口
-##### 接口描述
+
+#### 账户管理
+
+##### 创建单个账户接口
+###### 接口描述
 创建tenured账户，并用app自有账户与tenured账户关联，该接口主要是在tenured中创建一与之关联的内部ID,以确保app自有账户能正常使用tenured服务
 注：接口响应结果统一为json格式
-###### 请求url
+####### 请求url
 POST：/v1/build_account
-###### 请求参数
+####### 请求参数
  参数名称  |   参数类型  |    描述  
 ----------|-------------|----------
 appId     |   String    |    控制台创建应用分配appId
 sign      |   String    |    签名(或token)
 
 
-###### 请求body参数说明
+####### 请求body参数说明
  参数名称  |   参数类型  |    描述  
 ----------|-------------|----------
 id        |   String    |    第三方系统ID
@@ -57,19 +110,19 @@ userName  |   String    |    用户昵称
 sex       |   Integer   |    性别
 headImgUrl|   String    |    用户头像url
 
-###### 响应参数
+####### 响应参数
  参数名称 |   参数类型   |    描述  
 -------- |-------------|----------
   error  |   String    |  错误码，0000标示成功，非0000标示失败        
   message|   String    |  错误信息        
   data   |   String    |  null        
 
-###### 请求体示例
+####### 请求体示例
     { }
-###### 响应结果示例
+####### 响应结果示例
     { }
 
-##### 错误码说明
+###### 错误码说明
     HTTP 状态码均为 200，标示接口请求结果，真正的错误码，错误信息是通过应答包体中的 error、message 来表示的。
     本 API 私有错误码如下：
  错误码  |   描述   
@@ -171,3 +224,26 @@ headImgUrl|   String    |    用户头像url
 ### 查询全局禁言
 
 -->
+
+
+
+
+## 错误码说明
+    HTTP 状态码均为 200，标示接口请求结果，真正的错误码，错误信息是通过应答包体中的 error、message 来表示的。
+### 全局错误码
+
+ 错误码  |   描述
+--------|----------
+  1000  | 安全校验数据错误，非法调用，出现此错误,需要检查APPID,AK,SIGN是否填写正确 
+ 1001 | APP不存在 
+ 1002 | API调用频率过高，对接方被限流 
+  |  
+  |  
+
+###账户类错误码：
+
+| 错误码 | 描述       |
+| ------ | ---------- |
+| 2001   | 用户不存在 |
+|        |            |
+

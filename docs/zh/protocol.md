@@ -46,7 +46,7 @@ REQUEST_CODE_PEER_MSG=2 #用户发送点对点消息
 REQUEST_CODE_GROUP_MSG=3 #用户发送群组（聊天室）消息
 ```
 
-##ResponseCode
+## ResponseCode
 
 ```shell
 RESPONSE_CODE_SUCCESS=0
