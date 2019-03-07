@@ -38,7 +38,7 @@ headImgUrl|   string    |    用户头像url
   0000  |   正确结果
 
 
-### 批量创建账户接口
+#### 批量创建账户接口
 ##### 接口描述
 批量创建tenured账户，并用app自有账户与tenured账户关联，该接口主要是在tenured中创建一与之关联的内部ID,以确保app自有账户能正常使用tenured服务
 注：接口响应结果统一为json格式
