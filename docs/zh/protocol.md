@@ -41,16 +41,12 @@ body = basse64
 ## RequestCode
 
 ```shell
-REQUEST_CODE_AUTH=1 #用户登录认证消息
-REQUEST_CODE_PEER_MSG=2 #用户发送点对点消息
-REQUEST_CODE_GROUP_MSG=3 #用户发送群组（聊天室）消息
+REQUEST_CODE_HEARTBEAT=0 #心跳包
+#用户命令值，需要大于0
 ```
 
 ## ResponseCode
 
 ```shell
-RESPONSE_CODE_SUCCESS=0
-RESPONSE_CODE_ERROR_NO_AUTH=1 #客户端连接未提供认证信息
-RESPONSE_CODE_ERROR_NOT_A_FIREND=2 #点对点消息不能发送，对方开启好友认证，且对方并非好友。
-RESPONSE_CODE_ERROR_NOT_A_GROUP_MEMBER=3 #发送群组消息，并且用户不在群组中
+RESPONSE_CODE_SUCCESS=0 #命令接受成功
 ```
